@@ -45,6 +45,10 @@ public class PedidoService {
     // Adiciona o itemPedido ao pedido
     public void addItemPedido (Pedido pedido, ItemPedido itemPedido) throws BusinessException {
         // Validar item antes de adicionar
+        if (pedido == null) {
+            throw new BusinessException("Pedido não pode ser nulo.");
+        }
+        
         itemPedidoService.validarItemPedido(itemPedido);
         
         pedido.addItemPedido(itemPedido);
@@ -55,7 +59,7 @@ public class PedidoService {
         return pedidoDAO.findById(id);
     }
 
-    // Método para listar todos os Usuários
+    // Método para listar todos os Pedidos
     public List<Pedido> listAll () {
         return pedidoDAO.listAll();
     }

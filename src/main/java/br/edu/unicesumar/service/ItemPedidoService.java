@@ -47,7 +47,7 @@ public class ItemPedidoService {
         return itemPedidoDAO.findById(id);
     }
 
-    // Listar todos os ItensPedido
+    // Listar todos os itens do pedido
     public List<ItemPedido> listAll () {
         return itemPedidoDAO.listAll();
     }

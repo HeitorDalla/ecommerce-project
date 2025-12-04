@@ -51,7 +51,7 @@ public class ItemCarrinhoService {
         return itemCarrinhoDAO.findById(id);
     }
 
-    // Método para listar todos os Usuários
+    // Método para listar todos os itens do carrinho
     public List<ItemCarrinho> listAll () {
         return itemCarrinhoDAO.listAll();
     }
