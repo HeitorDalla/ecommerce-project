@@ -8,7 +8,8 @@ import br.edu.unicesumar.model.Usuario;
 
 import br.edu.unicesumar.utils.Utils;
 
-import br.edu.unicesumar.exception.BusinessException;;
+import br.edu.unicesumar.exception.BusinessException;
+import br.edu.unicesumar.exception.DAOException;;
 
 public class UsuarioService {
     /* Aqui vai ter regras de negócio */
@@ -29,15 +30,20 @@ public class UsuarioService {
         validarUsuario(usuario);
 
         // Caso as validações estejam corretas, ele chama o DAO para savar/validar no banco de dados
-        usuarioDAO.save(usuario);
+        try {
+            usuarioDAO.save(usuario);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao salvar usuario");
+        }
     }
 
     // Método que validar cada campo do Usuario
     // se dentro desse método eu chamo outro que lança 'BusinessException' mas nao coloco try/catch, preciso declarar throws na assinatura até chegar no controller
+    // declara que o metodo pode lancar excessoes (throw)
     public void validarUsuario (Usuario usuario) throws BusinessException {
         // Apenas verifica se o objeto Usuario não é nulo, não verifica campo algum do objeto
         if (usuario == null) {
-             throw new BusinessException("Usuário não pode ser nulo.");
+            throw new BusinessException("Usuário não pode ser nulo.");
         }
 
         // Validação para o nome do usuário
@@ -56,13 +62,27 @@ public class UsuarioService {
         }
     }
 
-    // Recebe o id do Controller, busca o Usuario no DAO e retorna o resultado ao Controller
-    public Usuario findById(int id) {
-        return usuarioDAO.findById(id);
+    // Método para listar todos os Usuários
+    public List<Usuario> listAll () throws BusinessException {
+        try {
+            List<Usuario> list = usuarioDAO.listAll();
+
+            if (list.isEmpty()) {
+                throw new BusinessException("Nenhum usuario encontrado");
+            }
+
+            return list;
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao listar usuarios");
+        }
     }
 
-    // Método para listar todos os Usuários
-    public List<Usuario> listAll () {
-        return usuarioDAO.listAll();
+    // Recebe o id do Controller, busca o Usuario no DAO e retorna o resultado ao Controller
+    public Usuario findById(int id) throws BusinessException {
+        try {
+            return usuarioDAO.findById(id);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao buscar usuario pelo ID");
+        }
     }
 }

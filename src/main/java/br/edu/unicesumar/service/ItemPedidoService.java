@@ -3,7 +3,7 @@ package br.edu.unicesumar.service;
 import br.edu.unicesumar.dao.ItemPedidoDAO;
 
 import br.edu.unicesumar.exception.BusinessException;
-
+import br.edu.unicesumar.exception.DAOException;
 import br.edu.unicesumar.model.ItemPedido;
 import br.edu.unicesumar.model.Pedido;
 
@@ -24,7 +24,11 @@ public class ItemPedidoService {
             throw new BusinessException("Pedido não pode ser nulo.");
         }
 
-        itemPedidoDAO.save(itemPedido);
+        try {
+            itemPedidoDAO.save(itemPedido);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao salvar item do pedido");
+        }
     }
 
     // Método que vai validar o objeto ItemPedido e todos os campos de ItemPedido
@@ -42,13 +46,27 @@ public class ItemPedidoService {
         }
     }
 
-    // Recebe o id do Controller, busca o ItemPedido no DAO e retorna o resultado ao Controller
-    public ItemPedido findById(int id) {
-        return itemPedidoDAO.findById(id);
+    // Listar todos os itens do pedido
+    public List<ItemPedido> listAll () throws BusinessException {
+        try {
+            List<ItemPedido> list = itemPedidoDAO.listAll();
+
+            if (list.isEmpty()) {
+                throw new BusinessException("Itens do pedido nao encontrado");
+            }
+
+            return list;
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao listar itens do pedido");
+        }
     }
 
-    // Listar todos os itens do pedido
-    public List<ItemPedido> listAll () {
-        return itemPedidoDAO.listAll();
+    // Recebe o id do Controller, busca o ItemPedido no DAO e retorna o resultado ao Controller
+    public ItemPedido findById (int id) throws BusinessException {
+        try {
+            return itemPedidoDAO.findById(id);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao buscar itens do pedido pelo ID");
+        }
     }
 }

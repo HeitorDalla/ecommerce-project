@@ -5,8 +5,8 @@ import java.util.List;
 import br.edu.unicesumar.dao.CategoriaDAO;
 
 import br.edu.unicesumar.model.Categoria;
-
 import br.edu.unicesumar.exception.BusinessException;
+import br.edu.unicesumar.exception.DAOException;
 
 public class CategoriaService {
     private final CategoriaDAO categoriaDAO;
@@ -19,7 +19,11 @@ public class CategoriaService {
     public void saveCategoria (Categoria categoria) throws BusinessException {
         validarCategoria(categoria);
 
-        categoriaDAO.save(categoria);
+        try {
+            categoriaDAO.save(categoria);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao salvar categoria");
+        }
     }
 
     // Método que vai validar cada campo da categoria
@@ -33,13 +37,27 @@ public class CategoriaService {
         }
     }
 
-    // Recebe o id do Controller, busca a Categoria no DAO e retorna o resultado ao Controller
-    public Categoria findById(int id) {
-        return categoriaDAO.findById(id);
+    // Método para listar todos as Categorias
+    public List<Categoria> listAll () throws BusinessException {
+        try {
+            List<Categoria> list = categoriaDAO.listAll();
+
+            if (list.isEmpty()) {
+                throw new BusinessException("Categorias nao encontradas");
+            }
+
+            return list;
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao listar categorias");
+        }
     }
 
-    // Método para listar todos as Categorias
-    public List<Categoria> listAll () {
-        return categoriaDAO.listAll();
+    // Recebe o id do Controller, busca a Categoria no DAO e retorna o resultado ao Controller
+    public Categoria findById (int id) throws BusinessException {
+        try {
+            return categoriaDAO.findById(id);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao buscar categoria pelo ID");
+        }
     }
 }

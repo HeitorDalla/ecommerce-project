@@ -5,7 +5,7 @@ import java.util.List;
 import br.edu.unicesumar.dao.PedidoDAO;
 
 import br.edu.unicesumar.exception.BusinessException;
-
+import br.edu.unicesumar.exception.DAOException;
 import br.edu.unicesumar.model.ItemPedido;
 import br.edu.unicesumar.model.Pedido;
 
@@ -24,8 +24,12 @@ public class PedidoService {
     public void savePedido (Pedido pedido) throws BusinessException {
         validarPedido(pedido);
 
-        // Se todos as validações forem corretas, ele chama o DAO para salvar no banco de dados
-        pedidoDAO.save(pedido);
+        // Se todos as validações forem corretas, ele chama o DAO para salvar no banco de dados\
+        try {
+            pedidoDAO.save(pedido);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao salvar pedido");
+        }
     }
 
     // Valida o pedido antes de salvar no banco de dados (DAO)
@@ -54,13 +58,27 @@ public class PedidoService {
         pedido.addItemPedido(itemPedido);
     }
 
-    // Recebe o id do Controller, busca o Pedido no DAO e retorna o resultado ao Controller
-    public Pedido findById(int id) {
-        return pedidoDAO.findById(id);
+    // Método para listar todos os Pedidos
+    public List<Pedido> listAll () throws BusinessException {
+        try {
+            List<Pedido> list = pedidoDAO.listAll();
+
+            if (list.isEmpty()) {
+                throw new BusinessException("Lista de pedidos nao encontrada");
+            }
+
+            return list;
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao listar pedidos");
+        }
     }
 
-    // Método para listar todos os Pedidos
-    public List<Pedido> listAll () {
-        return pedidoDAO.listAll();
+    // Recebe o id do Controller, busca o Pedido no DAO e retorna o resultado ao Controller
+    public Pedido findById (int id) throws BusinessException {
+        try {
+            return pedidoDAO.findById(id);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao buscar pedido pelo ID");
+        }
     }
 }

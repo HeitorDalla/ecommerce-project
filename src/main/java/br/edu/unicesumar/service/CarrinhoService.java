@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.edu.unicesumar.dao.CarrinhoDAO;
 import br.edu.unicesumar.exception.BusinessException;
+import br.edu.unicesumar.exception.DAOException;
 import br.edu.unicesumar.model.Carrinho;
 import br.edu.unicesumar.model.ItemCarrinho;
 
@@ -14,11 +15,14 @@ public class CarrinhoService {
         this.carrinhoDAO = new CarrinhoDAO();
     }
 
-    public boolean saveCarrinho (Carrinho carrinho) throws BusinessException {
+    public void saveCarrinho (Carrinho carrinho) throws BusinessException {
         validarCarrinho(carrinho);
 
-        carrinhoDAO.save(carrinho);
-        return true;
+        try {
+            carrinhoDAO.save(carrinho);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao salvar carrinho");
+        }
     }
 
     // Método que vai validar o objeto Carrinho e todos os campos de ItemCarrinho
@@ -31,7 +35,7 @@ public class CarrinhoService {
         // Verificar se a lista de itens esta vazia, se tiver, nao salva
         List<ItemCarrinho> itens = carrinho.getItens();
         if (itens == null || itens.isEmpty()) {
-            throw new BusinessException("Lista de itens não pode ser nula.");
+            throw new BusinessException("Carrinho deve conter ao menos um item");
         }
         
         // Verificar itens sem produto ou quantidade, se tiver, nao salva
@@ -42,13 +46,27 @@ public class CarrinhoService {
         }
     }
 
-    // Recebe o id do Controller, busca o carrinho no DAO e retorna o resultado ao Controller
-    public Carrinho findById(int id) {
-        return carrinhoDAO.findById(id);
+    // Método para listar todos os Carrinhos
+    public List<Carrinho> listAll () throws BusinessException {
+        try {
+            List<Carrinho> list = carrinhoDAO.listAll();
+
+            if (list.isEmpty()) {
+                throw new BusinessException("Carrinhos nao encontrados");
+            }
+
+            return list;
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao listar carrinhos");
+        }
     }
 
-    // Método para listar todos os Carrinhos
-    public List<Carrinho> listAll () {
-        return carrinhoDAO.listAll();
+    // Recebe o id do Controller, busca o carrinho no DAO e retorna o resultado ao Controller
+    public Carrinho findById (int id) throws BusinessException {
+        try {
+            return carrinhoDAO.findById(id);
+        } catch (DAOException e) {
+            throw new BusinessException("Erro ao buscar carrinho pelo ID");
+        }
     }
 }
