@@ -2,23 +2,24 @@ package br.edu.unicesumar.dao;
 
 import java.util.List;
 
+import br.edu.unicesumar.exception.DAOException;
 import br.edu.unicesumar.model.Usuario;
 import jakarta.persistence.TypedQuery;
 
 public class UsuarioDAO extends DAO<Usuario>{
 
-    //LISTANDO TODOS OS USUÁRIOS
+    // Listando todos os usuarios
     public List<Usuario> listAll(){
         try {
             TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u", Usuario.class);
 
             return query.getResultList();
         } catch (Exception e) {
-            return List.of();
+            throw new DAOException("Erro ao listar usuários");
         }
     }
 
-    //LISTANDO O USUÁRIO PELO IDENTIFICADOR
+    // Listando o usuario pelo identificador
     public Usuario findById(int id){
         try {
             TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u " + "WHERE u.id = :id", Usuario.class);
@@ -27,7 +28,7 @@ public class UsuarioDAO extends DAO<Usuario>{
             
             return query.getSingleResult();      
         } catch (Exception e) {
-            return null;
+            throw new DAOException("Erro ao buscar usuário pelo ID");
         }
     }
 }

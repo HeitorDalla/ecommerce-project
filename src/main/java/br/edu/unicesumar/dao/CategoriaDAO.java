@@ -2,23 +2,24 @@ package br.edu.unicesumar.dao;
 
 import java.util.List;
 
+import br.edu.unicesumar.exception.DAOException;
 import br.edu.unicesumar.model.Categoria;
 import jakarta.persistence.TypedQuery;
 
 public class CategoriaDAO extends DAO<Categoria>{
 
-    //LISTANDO TODOS AS CATEGORIAS
+    // Listando todas as categorias
     public List<Categoria> listAll(){
         try {
             TypedQuery<Categoria> query = em.createQuery("SELECT c FROM Categoria c", Categoria.class);
 
             return query.getResultList();
         } catch (Exception e) {
-            return List.of();
+            throw new DAOException("Erro ao listar categorias");
         }
     }
 
-    //LISTANDO O CATEGORIA PELO IDENTIFICADOR
+    // Listando a categoria pelo identificador
     public Categoria findById(int id){
         try {
             TypedQuery<Categoria> query = em.createQuery("SELECT c FROM Categoria c " + "WHERE c.id = :id", Categoria.class);
@@ -27,7 +28,7 @@ public class CategoriaDAO extends DAO<Categoria>{
 
             return query.getSingleResult();      
         } catch (Exception e) {
-            return null;
+            throw new DAOException("Erro ao buscar categoria pelo identificador");
         }
     }
 }

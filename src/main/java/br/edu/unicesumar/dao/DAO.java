@@ -1,5 +1,6 @@
 package br.edu.unicesumar.dao;
 
+import br.edu.unicesumar.exception.DAOException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -7,7 +8,8 @@ import jakarta.persistence.Persistence;
 public class DAO<Object> {
 
     protected EntityManager em;
-    //PADRÃO SINGLETON
+
+    // Padrao Singleton
     private static DAO instance;
 
     protected DAO(){
@@ -18,7 +20,7 @@ public class DAO<Object> {
         EntityManagerFactory emf = Persistence
                 .createEntityManagerFactory("exemplo_unicesumar");
         if(em == null){
-            //PADRÃO FACTORY METHOD
+            // Padrao Factory Method
             em = emf.createEntityManager();
         }
         return em;
@@ -31,51 +33,54 @@ public class DAO<Object> {
         return instance;
     }
 
-    //INSERÇÃO
+    // Insercao
     public void save(Object object){
         try {
-            //INICIANDO UMA TRANSAÇÃO
+            // Iniciando uma transacao
             em.getTransaction().begin();
-            //SALVAR O OBJETO
+            // Salva o objeto
             em.persist(object);
-            //FECHAR A TRANSAÇÃO
+            // Fecha a transacao
             em.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
-            //FAZENDO ROLLBACK PARA NÃO SALVAR A INFORMAÇÃO NO BANCO DE DADOS
+            // Fazendo rollback para nao salvar informacoes no banco de dados
             em.getTransaction().rollback();
+
+            throw new DAOException("Erro ao salvar no banco de dados");
         }
     }
 
-    //ATUALIZAÇÃO
+    // Atualizacao
     public void update(Object object){
         try {
-            //INICIANDO UMA TRANSAÇÃO
+            // Iniciando uma transacao
             em.getTransaction().begin();
-            //SALVAR O OBJETO
+            // Salva o objeto
             em.merge(object);
-            //FECHAR A TRANSAÇÃO
+            // Fecha a transacao
             em.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
-            //FAZENDO ROLLBACK PARA NÃO SALVAR A INFORMAÇÃO NO BANCO DE DADOS
+            // Fazendo rollback para nao salvar informacoes no banco de dados
             em.getTransaction().rollback();
+
+            throw new DAOException("Erro ao atualizar no banco");
         }
     }
 
-    //DELETE
+    // Delecao
     public void delete(Object object){
         try {
-            //INICIANDO UMA TRANSAÇÃO
+            // Iniciando uma transacao
             em.getTransaction().begin();
-            //SALVAR O OBJETO
+            // Salva o objeto
             em.remove(object);
-            //FECHAR A TRANSAÇÃO
+            // Fecha a transacao
             em.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
-            //FAZENDO ROLLBACK PARA NÃO SALVAR A INFORMAÇÃO NO BANCO DE DADOS
+            // Fazendo rollback para nao salvar informacoes no banco de dados
             em.getTransaction().rollback();
+
+            throw new DAOException("Erro ao deletar no banco");
         }
     }   
 }

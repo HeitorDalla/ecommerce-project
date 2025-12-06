@@ -2,23 +2,24 @@ package br.edu.unicesumar.dao;
 
 import java.util.List;
 
+import br.edu.unicesumar.exception.DAOException;
 import br.edu.unicesumar.model.Produto;
 import jakarta.persistence.TypedQuery;
 
 public class ProdutoDAO extends DAO<Produto>{
 
-    //LISTANDO TODOS OS PRODUTOS
+    // Listando todos os produtos
     public List<Produto> listAll(){
         try {
             TypedQuery<Produto> query = em.createQuery("SELECT p FROM Produto p", Produto.class);
 
             return query.getResultList();
         } catch (Exception e) {
-            return List.of();
+            throw new DAOException("Erro ao listar produtos");
         }
     }
 
-    //LISTANDO O PRODUTO PELO IDENTIFICADOR
+    // Listando o produto pelo identificador
     public Produto findById(int id){
         try {
             TypedQuery<Produto> query = em.createQuery("SELECT p FROM Produto p " + "WHERE p.id = :id", Produto.class);
@@ -27,7 +28,7 @@ public class ProdutoDAO extends DAO<Produto>{
 
             return query.getSingleResult();      
         } catch (Exception e) {
-            return null;
+            throw new DAOException("Erro ao buscar produto pelo ID");
         }
     }
 }
